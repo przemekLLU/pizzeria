@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* global Handlebars, utils, dataSource */ // eslint-disable-line no-unused-vars
 
 {
@@ -51,6 +52,7 @@
   const templates = {
     menuProduct: Handlebars.compile(document.querySelector(select.templateOf.menuProduct).innerHTML),
   };
+
   class Product { 
     constructor(id, data) {
       const thisProduct = this;
@@ -59,7 +61,6 @@
     
       thisProduct.renderInMenu();
       thisProduct,this.initAccordion();
-      console.log('new Product', thisProduct);
     }
 
     renderInMenu()  {
@@ -72,17 +73,22 @@
 
     initAccordion() {
       const thisProduct = this;
-      const clickableTrigger = select.menuProduct.clickable;
+      const clickableTrigger = thisProduct.element.querySelector(select.menuProduct.clickable);
       clickableTrigger.addEventListener('click', function(event) {
         event.preventDefault();
-        //find active products
-        const activeProducts = document.querySelectorAll('.products .active');
-        for (let element of activeProducts) {
-          element.classList.toggle('active');
+        let selectedItem = thisProduct.id;
+        console.log('selectedItem',selectedItem);
+        const articles = document.getElementsByClassName('product');    
+        
+        for (let article of articles)
+        {
+          if (selectedItem == article.id)
+          {
+            article.classList.toggle('active');
+          }
         }
 
-
-      });
+      });   
     }
   }
 
@@ -90,7 +96,7 @@
   const app = {
     initMenu: function() {
       const thisApp = this;
-      console.log('thisApp.data: ', thisApp.data);
+      //console.log('thisApp.data: ', thisApp.data);
       for (let productData in thisApp.data.products)  {
         new Product(productData, thisApp.data.products[productData]);
       }
@@ -103,11 +109,11 @@
 
     init: function(){
       const thisApp = this;
-      console.log('*** App starting ***');
-      console.log('thisApp:', thisApp);
-      console.log('classNames:', classNames);
-      console.log('settings:', settings);
-      console.log('templates:', templates);
+      //console.log('*** App starting ***');
+      //console.log('thisApp:', thisApp);
+      //console.log('classNames:', classNames);
+      //console.log('settings:', settings);
+      //console.log('templates:', templates);
 
       thisApp.initData();
       thisApp.initMenu();
