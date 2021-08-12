@@ -82,6 +82,7 @@
       thisProduct.formInputs = thisProduct.form.querySelectorAll(select.all.formInputs);
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
+      thisProduct.imageWrapper =  thisProduct.element.querySelector(select.menuProduct.imageWrapper);
     }
 
     initAccordion() {
@@ -103,7 +104,6 @@
 
     initOrderForm() {
       const thisProduct = this;
-
       thisProduct.form.addEventListener('submit', function(event){
         event.preventDefault();
         thisProduct.processOrder();
@@ -121,35 +121,48 @@
       });
     }
 
+    
+
     processOrder()  {
+      console.log('*****BEGIN LOOP*****');
       const thisProduct = this;
       const formData = utils.serializeFormToObject(thisProduct.form);
-
       let price = thisProduct.data.price;
-
-
+      let imageClass;
       for(let paramId in thisProduct.data.params) {
         const param = thisProduct.data.params[paramId];
 
         for(let optionId in param.options) {
           const option = param.options[optionId];
-
+          //changing price
           if(formData[paramId] && formData[paramId].includes(optionId)) {
             if(!option.default == true)  {
               price += option.price;
+              //console.log('Param Id', paramId);
+              //console.log('Option Id', optionId);
+              //console.log('Option', option);
+              //console.log('formData[paramId]', formData[paramId]);
+
+              //image: generating class name
             }
           }
           else {
             if(option.default == true)  {
-              price -= option.price;
+              price -= option.price; 
             }
           }
-        }
+
+          imageClass = paramId + '-' + optionId;
+          if(formData[paramId].includes(optionId)) {
+            console.log(imageClass,'Checked');
+          }
+
+
+          
+        } //end of interior loop
       }
-      console.log('Price',price);
       thisProduct.priceElem.innerHTML = price;
     }
-
   }
 
 
