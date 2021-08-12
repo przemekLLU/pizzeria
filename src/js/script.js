@@ -124,26 +124,20 @@
     
 
     processOrder()  {
-      console.log('*****BEGIN LOOP*****');
       const thisProduct = this;
       const formData = utils.serializeFormToObject(thisProduct.form);
       let price = thisProduct.data.price;
       let imageClass;
+
       for(let paramId in thisProduct.data.params) {
         const param = thisProduct.data.params[paramId];
 
         for(let optionId in param.options) {
           const option = param.options[optionId];
-          //changing price
+
           if(formData[paramId] && formData[paramId].includes(optionId)) {
             if(!option.default == true)  {
               price += option.price;
-              //console.log('Param Id', paramId);
-              //console.log('Option Id', optionId);
-              //console.log('Option', option);
-              //console.log('formData[paramId]', formData[paramId]);
-
-              //image: generating class name
             }
           }
           else {
@@ -152,15 +146,18 @@
             }
           }
 
-          imageClass = paramId + '-' + optionId;
-          if(formData[paramId].includes(optionId)) {
-            console.log(imageClass,'Checked');
+          imageClass = '.' + paramId + '-' + optionId;
+          const isOptionSelected = formData[paramId].includes(optionId);
+          const imageElement = thisProduct.element.querySelector(imageClass);
+          if (!imageElement) {
+            continue;
           }
 
-
-          
-        } //end of interior loop
-      }
+          isOptionSelected
+            ? imageElement.classList.add(classNames.menuProduct.imageVisible)
+            : imageElement.classList.remove(classNames.menuProduct.imageVisible);    
+        } 
+      } 
       thisProduct.priceElem.innerHTML = price;
     }
   }
