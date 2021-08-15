@@ -63,6 +63,7 @@
       thisProduct.getElements();
       thisProduct.initAccordion();
       thisProduct.initOrderForm();
+      thisProduct.initAmountWidget();
       thisProduct.processOrder();
     }
 
@@ -73,7 +74,7 @@
       const manuContainer = document.querySelector(select.containerOf.menu);
       manuContainer.appendChild(thisProduct.element);
     }
-
+    
     getElements(){
       const thisProduct = this;
     
@@ -83,6 +84,7 @@
       thisProduct.cartButton = thisProduct.element.querySelector(select.menuProduct.cartButton);
       thisProduct.priceElem = thisProduct.element.querySelector(select.menuProduct.priceElem);
       thisProduct.imageWrapper =  thisProduct.element.querySelector(select.menuProduct.imageWrapper);
+      thisProduct.amountWidgetElem = thisProduct.element.querySelector(select.menuProduct.amountWidget);
     }
 
     initAccordion() {
@@ -160,8 +162,75 @@
       } 
       thisProduct.priceElem.innerHTML = price;
     }
+
+    initAmountWidget()  {
+      const thisProduct = this;
+
+      thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+    }
   }
 
+  class AmountWidget  { 
+
+    constructor(element)  {
+      const thisWidget = this;
+      thisWidget.getElements(element);
+      thisWidget.setValue(thisWidget.input.value);
+      thisWidget.initActions(thisWidget.input.value);
+    }
+
+    getElements(element)  {
+      const thisWidget = this;
+
+      thisWidget.element = element;
+      thisWidget.input = thisWidget.element.querySelector(select.widgets.amount.input);
+      thisWidget.linkDecrease = thisWidget.element.querySelector(select.widgets.amount.linkDecrease);
+      thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
+    }
+
+    setValue(value) {
+      const thisWidget = this;
+      const newValue = parseInt(value);
+      //console.log('NewValue to check: ', newValue);
+      
+      if (thisWidget.value != newValue && !isNaN(newValue)) {
+        if(newValue>=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax)  {
+          thisWidget.value = newValue;
+        } else if (newValue < settings.amountWidget.defaultMin) {
+          //console.log('SETVALUE__TO SMALL');
+          thisWidget.input.value = 1;
+          //console.log('SETVALUE__Proper');
+        } else if (newValue > settings.amountWidget.defaultMax)  {
+        //console.log('SETVALUE__TO BIG');
+          thisWidget.input.value = 9;
+        }
+      } else  {
+        thisWidget.input.value = 1;
+      }
+    }
+
+    initActions() {
+      const thisWidget = this;
+      
+      thisWidget.input.addEventListener('change', function(change)  {
+        thisWidget.setValue(thisWidget.input.value);        
+      });
+
+      thisWidget.linkDecrease.addEventListener('click', function(event)  {
+        event.preventDefault();
+        //console.log('decreaseCLICK');
+        thisWidget.input.value  = parseInt(thisWidget.input.value) - 1;
+        thisWidget.setValue(thisWidget.input.value);
+      });
+
+      thisWidget.linkIncrease.addEventListener('click', function(event)  {
+        event.preventDefault();
+        //console.log('IncreaseClick');
+        thisWidget.input.value  = parseInt(thisWidget.input.value) + 1;
+        thisWidget.setValue(thisWidget.input.value);
+      });
+    }
+  }
 
   const app = {
     initMenu: function() {
