@@ -126,9 +126,12 @@
     
 
     processOrder()  {
+      console.log('wywołano porces order!!');
       const thisProduct = this;
       const formData = utils.serializeFormToObject(thisProduct.form);
       let price = thisProduct.data.price;
+      
+
       let imageClass;
 
       for(let paramId in thisProduct.data.params) {
@@ -160,6 +163,7 @@
             : imageElement.classList.remove(classNames.menuProduct.imageVisible);    
         } 
       } 
+      price = price * thisProduct.amountWidget.value;
       thisProduct.priceElem.innerHTML = price;
     }
 
@@ -167,6 +171,12 @@
       const thisProduct = this;
 
       thisProduct.amountWidget = new AmountWidget(thisProduct.amountWidgetElem);
+      thisProduct,this.amountWidget.value = settings.amountWidget.defaultValue;
+      
+      thisProduct.amountWidgetElem.addEventListener('updated', function(update)  {
+        console.log('Wywołano zdażenie updated!');
+        thisProduct.processOrder();
+      });
     }
   }
 
@@ -191,17 +201,14 @@
     setValue(value) {
       const thisWidget = this;
       const newValue = parseInt(value);
-      //console.log('NewValue to check: ', newValue);
       
       if (thisWidget.value != newValue && !isNaN(newValue)) {
         if(newValue>=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax)  {
           thisWidget.value = newValue;
+          this.announce();
         } else if (newValue < settings.amountWidget.defaultMin) {
-          //console.log('SETVALUE__TO SMALL');
           thisWidget.input.value = 1;
-          //console.log('SETVALUE__Proper');
         } else if (newValue > settings.amountWidget.defaultMax)  {
-        //console.log('SETVALUE__TO BIG');
           thisWidget.input.value = 9;
         }
       } else  {
@@ -218,17 +225,22 @@
 
       thisWidget.linkDecrease.addEventListener('click', function(event)  {
         event.preventDefault();
-        //console.log('decreaseCLICK');
         thisWidget.input.value  = parseInt(thisWidget.input.value) - 1;
         thisWidget.setValue(thisWidget.input.value);
       });
 
       thisWidget.linkIncrease.addEventListener('click', function(event)  {
         event.preventDefault();
-        //console.log('IncreaseClick');
         thisWidget.input.value  = parseInt(thisWidget.input.value) + 1;
         thisWidget.setValue(thisWidget.input.value);
       });
+    }
+
+    announce() {
+      //console.log('Announce wywołane!!!!');
+      const thisWidget = this;
+      const event = new Event('updated');
+      thisWidget.element.dispatchEvent(event);
     }
   }
 
