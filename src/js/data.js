@@ -1,38 +1,6 @@
 const dataSource = {}; // eslint-disable-line no-unused-vars
 
 dataSource.products = {
-  cake: {
-    id: 'cake',
-    class: 'small',
-    name: 'Zio Stefano\'s Doughnut',
-    price: 9,
-    description: 'Treat yourself with this soft, freshly baked cookie. The recipe has been handed down from generation to generation in our family and it has won us several first place prizes in local competitions.',
-    images: [
-      '<img class="active" src="images/doughnut.svg">',
-    ],
-  },
-  breakfast: {
-    id: 'breakfast',
-    class: 'small',
-    name: 'Zia Giulia\'s Breakfast',
-    price: 9,
-    description: 'There\'s no better way to start your day than indulging yourself with a cup of fresh Italian coffee and crispy waffels. Made just for you on the spot, this breakfast combo has been our guests\' favorite for over 50 years.',
-    images: [
-      '<img class="active" src="images/breakfast.svg">',
-    ],
-    params: {
-      coffee: {
-        label: 'Coffee type',
-        type: 'radios',
-        options: {
-          latte: {label: 'Latte', price: 1, default: true},
-          cappuccino: {label: 'Cappuccino', price: 1},
-          espresso: {label: 'Espresso', price: 1},
-          macchiato : {label: 'Macchiato ', price: 1},
-        },
-      },
-    },
-  },
   pizza: {
     id: 'pizza',
     name: 'Nonna Alba\'s Pizza',
@@ -84,6 +52,39 @@ dataSource.products = {
       },
     },
   },
+  cake: {
+    id: 'cake',
+    class: 'small',
+    name: 'Zio Stefano\'s Doughnut',
+    price: 9,
+    description: 'Treat yourself with this soft, freshly baked cookie. The recipe has been handed down from generation to generation in our family and it has won us several first place prizes in local competitions.',
+    images: [
+      '<img class="active" src="images/doughnut.svg">',
+    ],
+  },
+  breakfast: {
+    id: 'breakfast',
+    class: 'small',
+    name: 'Zia Giulia\'s Breakfast',
+    price: 9,
+    description: 'There\'s no better way to start your day than indulging yourself with a cup of fresh Italian coffee and crispy waffels. Made just for you on the spot, this breakfast combo has been our guests\' favorite for over 50 years.',
+    images: [
+      '<img class="active" src="images/breakfast.svg">',
+    ],
+    params: {
+      coffee: {
+        label: 'Coffee type',
+        type: 'radios',
+        options: {
+          latte: {label: 'Latte', price: 1, default: true},
+          cappuccino: {label: 'Cappuccino', price: 1},
+          espresso: {label: 'Espresso', price: 1},
+          macchiato : {label: 'Macchiato ', price: 1},
+        },
+      },
+    },
+  },
+
   salad: {
     id: 'salad',
     name: 'Nonno Alberto\'s Salad',
