@@ -209,18 +209,14 @@
         amount: thisProduct.amountWidget.value,
         priceSingle: thisProduct.priceSingle, 
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
-        //params: ,
-
+        params: thisProduct.prepareCartProductParams(),
       };
-
       return(productSummary);
     }
 
     addToCart() {
       const thisProduct = this;
-      //console.log('This Product', thisProduct);    //tutaj się wywołuje obiekt
       app.cart.add(thisProduct.prepareCartProduct());
-      thisProduct.prepareCartProductParams(); //tu wywołąłem, może do usunięcia
     }
 
     prepareCartProductParams()  {
@@ -233,7 +229,7 @@
         const param = thisProduct.data.params[paramId];
         params[paramId] = { 
           label: param.label,
-          options: {}
+          options: []
         };
     
         for(let optionId in param.options) {  
@@ -242,15 +238,13 @@
           
           if(optionSelected) {
             let optionLabel = optionId;    
-            //console.log(param.label,': ', option.label); //tu poprawnie wprowadza
-            params[paramId].options = {
+            params[paramId].options.push({
               type: optionLabel,
-            };
+            });
           }
         }
       }
-      console.log('PARAMS!',params);
-      //return params;
+      return params;
     }
   }
 
@@ -331,6 +325,7 @@
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
+      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     }
 
     initAction()  {
@@ -343,7 +338,9 @@
 
     add(menuProduct)  {
       const thisCart = this;
-      console.log('Skrócony menuProduct', menuProduct);
+      const generateHTML = templates.cartProduct(menuProduct);
+      const generateDOM = utils.createDOMFromHTML(generateHTML);
+      thisCart.dom.productList.appendChild(generateDOM);
     }
 
   }
