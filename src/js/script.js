@@ -229,18 +229,15 @@
         const param = thisProduct.data.params[paramId];
         params[paramId] = { 
           label: param.label,
-          options: []
+          options: {},
         };
     
         for(let optionId in param.options) {  
           const option = param.options[optionId];
           const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
-          
-          if(optionSelected) {
-            let optionLabel = optionId;    
-            params[paramId].options.push({
-              type: optionLabel,
-            });
+          if(optionSelected) { 
+            const optionLabel = option.label;
+            params[paramId].options[optionId] = optionLabel;
           }
         }
       }
