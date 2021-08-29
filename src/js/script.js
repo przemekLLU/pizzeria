@@ -308,6 +308,7 @@
     }
   }
 
+  //////////////////////////////////////////////////////CART START
   class cart  {
     constructor(element)  {
       const thisCart = this;
@@ -338,8 +339,127 @@
       const generateHTML = templates.cartProduct(menuProduct);
       const generateDOM = utils.createDOMFromHTML(generateHTML);
       thisCart.dom.productList.appendChild(generateDOM);
+      thisCart.products.push(new cartProduct(menuProduct, generateDOM));
+     
+    }
+  }
+
+  class cartAmountWidget  {     //similar function needed to change
+
+    constructor(element)  {
+      const thisCartWidget = this;
+      console.log('Constructor element', element);
+      thisCartWidget.getElements(element);
+      thisCartWidget.initCartActions(thisCartWidget.input.value);
+      thisCartWidget.setValue(thisCartWidget.input);
+      
     }
 
+    getElements(element)  {
+      const thisCartWidget = this;
+      thisCartWidget.input = element;
+      thisCartWidget.less = document.querySelector('a[href=\'#less\']');
+      thisCartWidget.more = document.querySelector('a[href=\'#more\']');
+    }
+
+    
+    
+    
+   
+
+    setValue(value) {
+      const thisCartWidget = this;
+      const newValue = parseInt(value);
+     
+      if (thisCartWidget.input.value != newValue && !isNaN(newValue)) {
+        if(newValue>=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax)  {
+          console.log('Proper', value);
+          console.log(thisCartWidget);
+          thisCartWidget.input = newValue;  //ta jebana linijka nie działa, nei zmienia wartości w Inpucie
+          //this.announce();
+        } else if (newValue < settings.amountWidget.defaultMin) {
+          thisCartWidget.input = 1;
+          console.log('Za mało, mniejsze od 1');
+        } else if (newValue > settings.amountWidget.defaultMax)  {
+          thisCartWidget.input = 9;
+          console.log('za dużo, większe od 10');
+        }
+      } else  {
+        console.log('ELSE');
+        thisCartWidget.input = 1;
+      }
+    }
+
+    initCartActions() {
+      const thisCartWidget = this;
+      thisCartWidget.more.addEventListener('click', function(event)  {
+        event.preventDefault();
+        thisCartWidget.input = parseInt(thisCartWidget.input) + 1;
+        thisCartWidget.setValue(thisCartWidget.input);
+      });
+
+      thisCartWidget.less.addEventListener('click', function(event)  {
+        event.preventDefault();
+        thisCartWidget.input = parseInt(thisCartWidget.input) - 1;
+        thisCartWidget.setValue(thisCartWidget.input);
+      });
+      /*
+      thisCartWidget.input.addEventListener('change', function(change)  {
+        console.log('Changed');
+        thisCartWidget.setValue(thisCartWidget.input);        
+      });
+      */
+    }
+    
+    
+    /*
+    announce() {
+      const thisCartWidget = this;
+      const event = new Event('updated');
+      console.log('ANNOUNCED!!!!!thisCartWidget.element', thisCartWidget);
+      thisCartWidget.dispatchEvent(event);
+      
+    }
+    */
+  }
+
+  class cartProduct  {
+    constructor(menuProduct, element)  {
+      const thisCartProduct = this;
+      thisCartProduct.getElements(element);
+      
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.price = menuProduct.price;
+      thisCartProduct.params = menuProduct.params;   
+
+      thisCartProduct.cartInitAmountButtons();
+    }
+
+    getElements(element)  {
+      const thisCartProduct = this;
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
+        
+      thisCartProduct.dom.amountWidget = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.price);
+      thisCartProduct.dom.edit = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = thisCartProduct.dom.wrapper.querySelector(select.cartProduct.remove);
+    }
+
+    cartInitAmountButtons() {
+      const thisCartProduct = this;
+      //console.log('ThisCartProduct in function',thisCartProduct);
+      new cartAmountWidget(thisCartProduct.amount);
+      /*
+      thisCartProduct.cartAmountWidget.addEventListener('updated', function(update)  {
+        thisCartProduct.processOrder();
+      });
+      */
+    }
   }
 
   const app = {
