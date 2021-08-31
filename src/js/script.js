@@ -31,7 +31,6 @@
         input: 'input.amount', 
         linkDecrease: 'a[href="#less"]',
         linkIncrease: 'a[href="#more"]',
-
       },
     },
     cart: {
@@ -324,6 +323,10 @@
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
       thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
+      thisCart.dom.deliveryFee = thisCart.dom.wrapper.querySelector(select.cart.deliveryFee);
+      thisCart.dom.subTotalPrice = thisCart.dom.wrapper.querySelector(select.cart.subtotalPrice);
+      thisCart.dom.totalPrice = thisCart.dom.wrapper.querySelector(select.cart.totalPrice);
+      thisCart.dom.totalNumber = thisCart.dom.wrapper.querySelector(select.cart.totalNumber);
     }
 
     initAction()  {
@@ -340,7 +343,27 @@
       const generateDOM = utils.createDOMFromHTML(generateHTML);
       thisCart.dom.productList.appendChild(generateDOM);
       thisCart.products.push(new cartProduct(menuProduct, generateDOM));
-     
+      thisCart.update();
+    }
+
+    update()  {
+      const thisCart = this;
+      const deliveryFee = settings.cart.defaultDeliveryFee;
+      console.log(deliveryFee);   //tu mam problem :)
+      let totalNumber = 0;
+      let subtotalPrice = 0;
+      
+      for (let cartProduct of thisCart.products)  {
+        totalNumber += cartProduct.amount;
+        subtotalPrice += cartProduct.price;
+      }
+
+      if (totalNumber == 0) {
+        deliveryFee == 0;
+      } else {
+        //thisCart.dom.wrapper.getElementsByClassName('cart__order-delivery') = deliveryFee;
+      }
+      //console.log('thisCart.dom.deliveryFee',thisCart);
     }
   }
 
@@ -348,45 +371,32 @@
 
     constructor(element)  {
       const thisCartWidget = this;
-      console.log('Constructor element', element);
       thisCartWidget.getElements(element);
-      thisCartWidget.initCartActions(thisCartWidget.input.value);
-      thisCartWidget.setValue(thisCartWidget.input);
-      
+      thisCartWidget.initCartActions();
     }
 
     getElements(element)  {
       const thisCartWidget = this;
-      thisCartWidget.input = element;
-      thisCartWidget.less = document.querySelector('a[href=\'#less\']');
-      thisCartWidget.more = document.querySelector('a[href=\'#more\']');
+      thisCartWidget.input = element.dom.amountWidget.querySelector(select.widgets.amount.input);
+      thisCartWidget.less = element.dom.amountWidget.querySelector('a[href=\'#less\']');
+      thisCartWidget.more = element.dom.amountWidget.querySelector('a[href=\'#more\']');
     }
-
-    
-    
-    
-   
 
     setValue(value) {
       const thisCartWidget = this;
       const newValue = parseInt(value);
      
-      if (thisCartWidget.input.value != newValue && !isNaN(newValue)) {
+      if (!isNaN(newValue)) {
         if(newValue>=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax)  {
-          console.log('Proper', value);
-          console.log(thisCartWidget);
-          thisCartWidget.input = newValue;  //ta jebana linijka nie działa, nei zmienia wartości w Inpucie
+          thisCartWidget.input.value = newValue;  //ta jebana linijka nie działa, nei zmienia wartości w Inpucie
           //this.announce();
         } else if (newValue < settings.amountWidget.defaultMin) {
-          thisCartWidget.input = 1;
-          console.log('Za mało, mniejsze od 1');
+          thisCartWidget.input.value = 1;
         } else if (newValue > settings.amountWidget.defaultMax)  {
-          thisCartWidget.input = 9;
-          console.log('za dużo, większe od 10');
+          thisCartWidget.input.value = 9;
         }
       } else  {
-        console.log('ELSE');
-        thisCartWidget.input = 1;
+        thisCartWidget.input.value = 1;
       }
     }
 
@@ -394,14 +404,14 @@
       const thisCartWidget = this;
       thisCartWidget.more.addEventListener('click', function(event)  {
         event.preventDefault();
-        thisCartWidget.input = parseInt(thisCartWidget.input) + 1;
-        thisCartWidget.setValue(thisCartWidget.input);
+        thisCartWidget.input.value = parseInt(thisCartWidget.input.value) + 1;
+        thisCartWidget.setValue(thisCartWidget.input.value);
       });
 
       thisCartWidget.less.addEventListener('click', function(event)  {
         event.preventDefault();
-        thisCartWidget.input = parseInt(thisCartWidget.input) - 1;
-        thisCartWidget.setValue(thisCartWidget.input);
+        thisCartWidget.input.value = parseInt(thisCartWidget.input.value) - 1;
+        thisCartWidget.setValue(thisCartWidget.input.value);
       });
       /*
       thisCartWidget.input.addEventListener('change', function(change)  {
@@ -412,13 +422,11 @@
     }
     
     
-    /*
+    /* do zrobienia w wolnej chwili XD
     announce() {
       const thisCartWidget = this;
       const event = new Event('updated');
-      console.log('ANNOUNCED!!!!!thisCartWidget.element', thisCartWidget);
       thisCartWidget.dispatchEvent(event);
-      
     }
     */
   }
@@ -452,8 +460,7 @@
 
     cartInitAmountButtons() {
       const thisCartProduct = this;
-      //console.log('ThisCartProduct in function',thisCartProduct);
-      new cartAmountWidget(thisCartProduct.amount);
+      new cartAmountWidget(thisCartProduct);
       /*
       thisCartProduct.cartAmountWidget.addEventListener('updated', function(update)  {
         thisCartProduct.processOrder();
