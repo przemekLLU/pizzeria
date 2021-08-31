@@ -349,7 +349,7 @@
     update()  {
       const thisCart = this;
       const deliveryFee = settings.cart.defaultDeliveryFee;
-      console.log(deliveryFee);   //tu mam problem :)
+      //console.log(deliveryFee);   //tu mam problem :)
       let totalNumber = 0;
       let subtotalPrice = 0;
       
@@ -361,9 +361,16 @@
       if (totalNumber == 0) {
         deliveryFee == 0;
       } else {
-        //thisCart.dom.wrapper.getElementsByClassName('cart__order-delivery') = deliveryFee;
+        const total = deliveryFee + subtotalPrice;
+
+        thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
+        thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
+        thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
+        
+        for (const totalElement of thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice)) {
+          totalElement.innerHTML = total;
+        }
       }
-      //console.log('thisCart.dom.deliveryFee',thisCart);
     }
   }
 
