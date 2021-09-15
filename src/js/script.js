@@ -302,7 +302,9 @@
 
     announce() {
       const thisWidget = this;
-      const event = new Event('updated');
+      const event = new CustomEvent('updated', {
+        bubbles: true
+      });
       thisWidget.element.dispatchEvent(event);
     }
   }
@@ -335,6 +337,10 @@
       thisCart.dom.toggleTrigger.addEventListener('click', function(event)  {
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
+
+      thisCart.dom.productList.addEventListener('updated', function() {
+        thisCart.update();
+      });
     }
 
     add(menuProduct)  {
@@ -349,9 +355,9 @@
     update()  {
       const thisCart = this;
       const deliveryFee = settings.cart.defaultDeliveryFee;
-      //console.log(deliveryFee);   //tu mam problem :)
       let totalNumber = 0;
       let subtotalPrice = 0;
+      
       
       for (let cartProduct of thisCart.products)  {
         totalNumber += cartProduct.amount;
@@ -363,15 +369,16 @@
       } else {
         const total = deliveryFee + subtotalPrice;
 
+        thisCart.dom.deliveryFee.innerHTML = deliveryFee;
         thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
-        thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
-        thisCart.dom.subTotalPrice.innerHTML = subtotalPrice;
+        thisCart.dom.totalPrice.innerHTML = total;
         
         for (const totalElement of thisCart.dom.wrapper.querySelectorAll(select.cart.totalPrice)) {
           totalElement.innerHTML = total;
         }
       }
     }
+
   }
 
   class cartAmountWidget  {     //similar function needed to change
@@ -395,7 +402,10 @@
      
       if (!isNaN(newValue)) {
         if(newValue>=settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax)  {
-          thisCartWidget.input.value = newValue;  //ta jebana linijka nie działa, nei zmienia wartości w Inpucie
+          thisCartWidget.input.value = newValue; 
+          console.log('TCW INPUT>WALUE', thisCartWidget.input);
+          console.log(newValue);
+          //thisCartWidget.querySelector(select.3.) ///////////////////////
           //this.announce();
         } else if (newValue < settings.amountWidget.defaultMin) {
           thisCartWidget.input.value = 1;
@@ -420,12 +430,12 @@
         thisCartWidget.input.value = parseInt(thisCartWidget.input.value) - 1;
         thisCartWidget.setValue(thisCartWidget.input.value);
       });
-      /*
+      
       thisCartWidget.input.addEventListener('change', function(change)  {
         console.log('Changed');
         thisCartWidget.setValue(thisCartWidget.input);        
       });
-      */
+      
     }
     
     
@@ -452,6 +462,7 @@
       thisCartProduct.params = menuProduct.params;   
 
       thisCartProduct.cartInitAmountButtons();
+      thisCartProduct.initActions();
     }
 
     getElements(element)  {
@@ -467,13 +478,44 @@
 
     cartInitAmountButtons() {
       const thisCartProduct = this;
-      new cartAmountWidget(thisCartProduct);
-      /*
-      thisCartProduct.cartAmountWidget.addEventListener('updated', function(update)  {
-        thisCartProduct.processOrder();
-      });
-      */
+      new cartAmountWidget(thisCartProduct);      
     }
+
+    remove()  {
+      const thisCartProduct = this;
+
+      console.log('REMOVE WYWOŁANA');
+
+      const event = new CustomEvent('remove', {
+        bubbles: true,
+        detail: {
+          cartProduct: thisCartProduct,
+        },
+      });
+
+      thisCartProduct.dom.wrapper.dispatchEvent(event);
+    }
+
+    initActions() {
+      console.log('CartProduct.initactions');
+      const thisCartProduct = this;
+
+      thisCartProduct.dom.edit.addEventListener('click', function(event)  {
+        event.preventDefault();
+        console.log('EDIT LISTENER');
+      });
+
+      
+      thisCartProduct.dom.remove.addEventListener('click', function(event)  {
+        event.preventDefault();
+        console.log('REMOVE LISTENER');
+        thisCartProduct.remove();
+      });
+
+    }
+
+    
+    
   }
 
   const app = {
